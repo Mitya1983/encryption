@@ -84,7 +84,7 @@ auto tristan::encryption::encryptAES(const std::vector< unsigned char >& p_vecto
                                      const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
     CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
     l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
-    std::vector< uint8_t > l_vector;
+    std::vector< unsigned char> l_vector;
     CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::VectorSink(l_vector)));
 
     return l_vector;
@@ -95,7 +95,7 @@ auto tristan::encryption::encryptAES(const std::vector< unsigned char >& p_vecto
                                      const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
     CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
     l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
-    std::vector< uint8_t > l_vector;
+    std::vector< unsigned char> l_vector;
     CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::VectorSink(l_vector)));
 
     return l_vector;
