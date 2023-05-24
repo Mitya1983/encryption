@@ -16,8 +16,8 @@ auto tristan::encryption::encodeBase64(std::string&& p_string) -> std::string { 
 auto tristan::encryption::encodeBase64(const std::vector< unsigned char >& p_vector) -> std::vector< uint8_t > {
     std::vector< unsigned char > l_vector;
     CryptoPP::VectorSource l_vector_source(p_vector, true, new CryptoPP::Base64Encoder(new CryptoPP::VectorSink(l_vector), false));
-    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
-    l_vector.erase(end, l_vector.end());
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
     return l_vector;
 }
 
@@ -34,8 +34,8 @@ auto tristan::encryption::decodeBase64(std::string&& p_string) -> std::string { 
 auto tristan::encryption::decodeBase64(const std::vector< unsigned char >& p_vector) -> std::vector< uint8_t > {
     std::vector< unsigned char > l_vector;
     CryptoPP::VectorSource l_vector_source(p_vector, true, new CryptoPP::Base64Decoder(new CryptoPP::VectorSink(l_vector)));
-    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
-    l_vector.erase(end, l_vector.end());
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
     return l_vector;
 }
 
@@ -170,8 +170,8 @@ auto tristan::encryption::decryptAES(const std::vector< unsigned char >& p_vecto
     l_decryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
     std::vector< unsigned char > l_vector;
     CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedDecryptionFilter(l_decryption, new CryptoPP::VectorSink(l_vector)));
-    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
-    l_vector.erase(end, l_vector.end());
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
     return l_vector;
 }
 
@@ -183,8 +183,8 @@ auto tristan::encryption::decryptAES(const std::vector< unsigned char >& p_vecto
 
     std::vector< unsigned char > l_vector;
     CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::VectorSink(l_vector)));
-    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
-    l_vector.erase(end, l_vector.end());
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
     return l_vector;
 }
 
