@@ -5,145 +5,207 @@
 #include <eax.h>
 #include <aes.h>
 
-auto tristan::encryption::encodeBase64(const std::string& raw_string) -> std::string {
-    std::string encoded;
-    CryptoPP::StringSource ss(raw_string.c_str(), true, new CryptoPP::Base64Encoder(new CryptoPP::StringSink(encoded), false));
-    return encoded;
+auto tristan::encryption::encodeBase64(const std::string& p_string) -> std::string {
+    std::string l_string;
+    CryptoPP::StringSource l_string_source(p_string, true, new CryptoPP::Base64Encoder(new CryptoPP::StringSink(l_string), false));
+    return l_string;
 }
 
-auto tristan::encryption::encodeBase64(const std::vector< uint8_t >& raw_vector) -> std::vector< uint8_t > {
-    std::vector< uint8_t > encoded;
+auto tristan::encryption::encodeBase64(std::string&& p_string) -> std::string { return tristan::encryption::encodeBase64(p_string); }
 
-    CryptoPP::ArraySource ss(
-        raw_vector.data(), raw_vector.size(), true, new CryptoPP::Base64Encoder(new CryptoPP::ArraySink(encoded.data(), encoded.size()), false));
-    return encoded;
+auto tristan::encryption::encodeBase64(const std::vector< unsigned char >& p_vector) -> std::vector< uint8_t > {
+    std::vector< unsigned char > l_vector;
+    CryptoPP::VectorSource l_vector_source(p_vector, true, new CryptoPP::Base64Encoder(new CryptoPP::VectorSink(l_vector), false));
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
+    return l_vector;
 }
 
-auto tristan::encryption::decodeBase64(const std::string& encoded_string) -> std::string {
-    std::string decoded;
-    CryptoPP::StringSource ss(encoded_string.c_str(), true, new CryptoPP::Base64Decoder(new CryptoPP::StringSink(decoded)));
-    return decoded;
+auto tristan::encryption::encodeBase64(std::vector< uint8_t >&& p_vector) -> std::vector< uint8_t > { return tristan::encryption::encodeBase64(p_vector); }
+
+auto tristan::encryption::decodeBase64(const std::string& p_string) -> std::string {
+    std::string l_string;
+    CryptoPP::StringSource l_string_source(p_string, true, new CryptoPP::Base64Decoder(new CryptoPP::StringSink(l_string)));
+    return l_string;
 }
 
-auto tristan::encryption::decodeBase64(const std::vector< uint8_t >& encoded_vector) -> std::vector< uint8_t > {
-    std::vector< uint8_t > decoded;
-    decoded.resize(encoded_vector.size());
-    CryptoPP::ArraySource ss(
-        encoded_vector.data(), encoded_vector.size(), true, new CryptoPP::Base64Decoder(new CryptoPP::ArraySink(decoded.data(), decoded.size())));
-    auto end = std::find(decoded.begin(), decoded.end(), 0);
-    decoded.erase(end, decoded.end());
-    return decoded;
+auto tristan::encryption::decodeBase64(std::string&& p_string) -> std::string { return tristan::encryption::decodeBase64(p_string); }
+
+auto tristan::encryption::decodeBase64(const std::vector< unsigned char >& p_vector) -> std::vector< uint8_t > {
+    std::vector< unsigned char > l_vector;
+    CryptoPP::VectorSource l_vector_source(p_vector, true, new CryptoPP::Base64Decoder(new CryptoPP::VectorSink(l_vector)));
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
+    return l_vector;
 }
 
-auto tristan::encryption::encryptAES(const std::string& raw_string, const std::array< uint8_t, 16 >& key, const std::array< uint8_t, 16 >& init_vector)
+auto tristan::encryption::decodeBase64(std::vector< uint8_t >&& p_vector) -> std::vector< uint8_t > {
+    return tristan::encryption::decodeBase64(p_vector);
+}
+
+auto tristan::encryption::encryptAES(const std::string& p_string, const std::array< uint8_t, 16 >& p_key, const std::array< uint8_t, 16 >& p_init_vector)
     -> std::string {
-    CryptoPP::EAX< CryptoPP::AES >::Encryption encryptor;
-    encryptor.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::string encrypted;
-    CryptoPP::StringSource ss(raw_string, true, new CryptoPP::AuthenticatedEncryptionFilter(encryptor, new CryptoPP::StringSink(encrypted)));
-
-    return encrypted;
+    CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
+    l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::string l_string;
+    CryptoPP::StringSource ss(p_string, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::StringSink(l_string)));
+    return l_string;
 }
 
-auto tristan::encryption::encryptAES(const std::string& raw_string, const std::array< uint8_t, 32 >& key, const std::array< uint8_t, 16 >& init_vector)
+auto tristan::encryption::encryptAES(const std::string& p_string, const std::array< uint8_t, 32 >& p_key, const std::array< uint8_t, 16 >& p_init_vector)
     -> std::string {
-    CryptoPP::EAX< CryptoPP::AES >::Encryption encryptor;
-    encryptor.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::string encrypted;
-    CryptoPP::StringSource ss(raw_string, true, new CryptoPP::AuthenticatedEncryptionFilter(encryptor, new CryptoPP::StringSink(encrypted)));
-
-    return encrypted;
+    CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
+    l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::string l_string;
+    CryptoPP::StringSource ss(p_string, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::StringSink(l_string)));
+    return l_string;
 }
 
-auto tristan::encryption::encryptAES(const std::vector< uint8_t >& raw_vector,
-                                     const std::array< uint8_t, 16 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::vector< uint8_t > {
-    CryptoPP::EAX< CryptoPP::AES >::Encryption encryptor;
-    encryptor.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::vector< uint8_t > encrypted;
-    encrypted.resize(raw_vector.size() + CryptoPP::AES::BLOCKSIZE);
-    CryptoPP::ArraySource ss(raw_vector.data(),
-                             raw_vector.size(),
-                             true,
-                             new CryptoPP::AuthenticatedEncryptionFilter(encryptor, new CryptoPP::ArraySink(encrypted.data(), encrypted.size())));
-
-    return encrypted;
+auto tristan::encryption::encryptAES(std::string&& p_string, const std::array< uint8_t, 16 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::string {
+    return tristan::encryption::encryptAES(p_string, p_key, p_init_vector);
 }
 
-auto tristan::encryption::encryptAES(const std::vector< uint8_t >& raw_vector,
-                                     const std::array< uint8_t, 32 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::vector< uint8_t > {
-    CryptoPP::EAX< CryptoPP::AES >::Encryption encryptor;
-    encryptor.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::vector< uint8_t > encrypted;
-    encrypted.resize(raw_vector.size() + CryptoPP::AES::BLOCKSIZE);
-    CryptoPP::ArraySource ss(raw_vector.data(),
-                             raw_vector.size(),
-                             true,
-                             new CryptoPP::AuthenticatedEncryptionFilter(encryptor, new CryptoPP::ArraySink(encrypted.data(), encrypted.size())));
-
-    return encrypted;
+auto tristan::encryption::encryptAES(std::string&& p_string, const std::array< uint8_t, 32 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::string {
+    return tristan::encryption::encryptAES(p_string, p_key, p_init_vector);
 }
 
-auto tristan::encryption::decryptAES(const std::string& aes_encrypted_string,
-                                     const std::array< uint8_t, 16 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::string {
+auto tristan::encryption::encryptAES(std::string&& p_string, const std::array< uint8_t, 16 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector) -> std::string {
+    return tristan::encryption::encryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::encryptAES(std::string&& p_string, const std::array< uint8_t, 32 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector) -> std::string {
+    return tristan::encryption::encryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::encryptAES(const std::vector< unsigned char >& p_vector,
+                                     const std::array< uint8_t, 16 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
+    CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
+    l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::vector< unsigned char> l_vector;
+    CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::VectorSink(l_vector)));
+
+    return l_vector;
+}
+
+auto tristan::encryption::encryptAES(const std::vector< unsigned char >& p_vector,
+                                     const std::array< uint8_t, 32 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
+    CryptoPP::EAX< CryptoPP::AES >::Encryption l_encryption;
+    l_encryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::vector< unsigned char> l_vector;
+    CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedEncryptionFilter(l_encryption, new CryptoPP::VectorSink(l_vector)));
+
+    return l_vector;
+}
+
+auto tristan::encryption::encryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 16 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::encryptAES(p_vector, p_key, p_init_vector);
+}
+
+auto tristan::encryption::encryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 32 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::encryptAES(p_vector, p_key, p_init_vector);
+}
+
+auto tristan::encryption::encryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 16 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::encryptAES(p_vector, p_key, p_init_vector);
+}
+
+auto tristan::encryption::encryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 32 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::encryptAES(p_vector, p_key, p_init_vector);
+}
+
+auto tristan::encryption::decryptAES(const std::string& p_string,
+                                     const std::array< uint8_t, 16 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::string {
+    CryptoPP::EAX< CryptoPP::AES >::Decryption l_decryption;
+    l_decryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::string l_string;
+    CryptoPP::StringSource ss(p_string, true, new CryptoPP::AuthenticatedDecryptionFilter(l_decryption, new CryptoPP::StringSink(l_string)));
+
+    return l_string;
+}
+
+auto tristan::encryption::decryptAES(const std::string& p_string,
+                                     const std::array< uint8_t, 32 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::string {
+    CryptoPP::EAX< CryptoPP::AES >::Decryption l_decryption;
+    l_decryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::string l_string;
+    CryptoPP::StringSource ss(p_string, true, new CryptoPP::AuthenticatedDecryptionFilter(l_decryption, new CryptoPP::StringSink(l_string)));
+
+    return l_string;
+}
+
+auto tristan::encryption::decryptAES(std::string&& p_string, std::array< uint8_t, 16 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::string {
+    return tristan::encryption::decryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::decryptAES(std::string&& p_string, std::array< uint8_t, 32 >&& p_key, const std::array< uint8_t, 16 >& p_init_vector)
+    -> std::string {
+    return tristan::encryption::decryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::decryptAES(std::string&& p_string, std::array< uint8_t, 16 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::string {
+    return tristan::encryption::decryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::decryptAES(std::string&& p_string, std::array< uint8_t, 32 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::string {
+    return tristan::encryption::decryptAES(p_string, p_key, p_init_vector);
+}
+
+auto tristan::encryption::decryptAES(const std::vector< unsigned char >& p_vector,
+                                     const std::array< uint8_t, 16 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
+    CryptoPP::EAX< CryptoPP::AES >::Decryption l_decryption;
+    l_decryption.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
+    std::vector< unsigned char > l_vector;
+    CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedDecryptionFilter(l_decryption, new CryptoPP::VectorSink(l_vector)));
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
+    return l_vector;
+}
+
+auto tristan::encryption::decryptAES(const std::vector< unsigned char >& p_vector,
+                                     const std::array< uint8_t, 32 >& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
     CryptoPP::EAX< CryptoPP::AES >::Decryption decrypter;
-    decrypter.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
+    decrypter.SetKeyWithIV(p_key.data(), p_key.size(), p_init_vector.data(), p_init_vector.size());
 
-    std::string decrypted;
-    CryptoPP::StringSource ss(aes_encrypted_string, true, new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::StringSink(decrypted)));
-
-    return decrypted;
+    std::vector< unsigned char > l_vector;
+    CryptoPP::VectorSource ss(p_vector, true, new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::VectorSink(l_vector)));
+//    auto end = std::find(l_vector.begin(), l_vector.end(), 0);
+//    l_vector.erase(end, l_vector.end());
+    return l_vector;
 }
 
-auto tristan::encryption::decryptAES(const std::string& aes_encrypted_string,
-                                     const std::array< uint8_t, 32 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::string {
-    CryptoPP::EAX< CryptoPP::AES >::Decryption decrypter;
-    decrypter.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::string decrypted;
-    CryptoPP::StringSource ss(aes_encrypted_string, true, new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::StringSink(decrypted)));
-
-    return decrypted;
+auto tristan::encryption::decryptAES(std::vector< uint8_t >&& p_vector,
+                                     std::array< uint8_t, 16 >&& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
+    return tristan::encryption::decryptAES(p_vector, p_key, p_init_vector);
 }
 
-auto tristan::encryption::decryptAES(const std::vector< uint8_t >& aes_encrypted_vector,
-                                     const std::array< uint8_t, 16 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::vector< uint8_t > {
-    CryptoPP::EAX< CryptoPP::AES >::Decryption decrypter;
-    decrypter.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
-
-    std::vector< uint8_t > decrypted;
-    decrypted.resize(aes_encrypted_vector.size());
-    CryptoPP::ArraySource ss(aes_encrypted_vector.data(),
-                             aes_encrypted_vector.size(),
-                             true,
-                             new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::ArraySink(decrypted.data(), decrypted.size())));
-    auto end = std::find(decrypted.begin(), decrypted.end(), 0);
-    decrypted.erase(end, decrypted.end());
-    return decrypted;
+auto tristan::encryption::decryptAES(std::vector< uint8_t >&& p_vector,
+                                     std::array< uint8_t, 32 >&& p_key,
+                                     const std::array< uint8_t, 16 >& p_init_vector) -> std::vector< uint8_t > {
+    return tristan::encryption::decryptAES(p_vector, p_key, p_init_vector);
 }
 
-auto tristan::encryption::decryptAES(const std::vector< uint8_t >& aes_encrypted_vector,
-                                     const std::array< uint8_t, 32 >& key,
-                                     const std::array< uint8_t, 16 >& init_vector) -> std::vector< uint8_t > {
-    CryptoPP::EAX< CryptoPP::AES >::Decryption decrypter;
-    decrypter.SetKeyWithIV(key.data(), key.size(), init_vector.data(), init_vector.size());
+auto tristan::encryption::decryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 16 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::decryptAES(p_vector, p_key, p_init_vector);
+}
 
-    std::vector< uint8_t > decrypted;
-    decrypted.resize(aes_encrypted_vector.size());
-
-    CryptoPP::ArraySource ss(aes_encrypted_vector.data(),
-                             aes_encrypted_vector.size(),
-                             true,
-                             new CryptoPP::AuthenticatedDecryptionFilter(decrypter, new CryptoPP::ArraySink(decrypted.data(), decrypted.size())));
-    auto end = std::find(decrypted.begin(), decrypted.end(), 0);
-    decrypted.erase(end, decrypted.end());
-    return decrypted;
+auto tristan::encryption::decryptAES(std::vector< uint8_t >&& p_vector, std::array< uint8_t, 32 >&& p_key, std::array< uint8_t, 16 >&& p_init_vector)
+    -> std::vector< uint8_t > {
+    return tristan::encryption::decryptAES(p_vector, p_key, p_init_vector);
 }
