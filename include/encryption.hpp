@@ -1,11 +1,12 @@
 #ifndef ENCRYPTION_HPP
 #define ENCRYPTION_HPP
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <array>
 
-namespace tristan::encryption {
+namespace mt::encryption {
 
     [[nodiscard]] auto encodeBase64(const std::string& p_string) -> std::string;
     [[nodiscard]] auto encodeBase64(std::string&& p_string) -> std::string;
