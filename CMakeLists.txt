@@ -44,21 +44,27 @@ if (${PROJECT_IS_TOP_LEVEL})
         message(FATAL_ERROR "Compiler not supported")
     endif ()
 endif ()
+
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp)
+    file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp870.zip DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp VERBOSE)
+endif ()
+
 include_directories(
         include/
         cryptopp/
-)
+        )
 
 file(GLOB INC_FILES CONFIGURE_DEPENDS
-        include/*.hpp
-)
+     include/*.hpp
+     )
 file(GLOB PRIVATE_INC_FILES CONFIGURE_DEPENDS
-        cryptopp/*.h
-)
+     cryptopp/*.h
+     )
 file(GLOB SRC_FILES CONFIGURE_DEPENDS
-        source/*.cpp
-        cryptopp/*.cpp
-)
+     source/*.cpp
+     cryptopp/*.cpp
+     )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
@@ -67,7 +73,7 @@ set(LIB_VERSION 2.0.0)
 if ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
     message(STATUS "${PROJECT_NAME}: CMAKE_INSTALL_PREFIX is not set. ${CMAKE_BINARY_DIR} directory will be used")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/mt_libs")
-else()
+else ()
     set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/mt_libs")
 endif ()
 
@@ -104,14 +110,14 @@ if (${ENABLE_ASAN} AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_BUILD_TY
     execute_process(
             COMMAND find ${PATH_TO_CLANG_DIRECTORY} -name libclang_rt.asan-x86_64.so
             OUTPUT_VARIABLE PATH_TO_CLANG_LIB_DIRECTORY
-    )
+            )
     string(STRIP ${PATH_TO_CLANG_LIB_DIRECTORY} PATH_TO_CLANG_LIB_DIRECTORY)
     target_link_directories(${PROJECT_NAME} PRIVATE
-            ${PATH_TO_CLANG_LIB_DIRECTORY}
-    )
+                            ${PATH_TO_CLANG_LIB_DIRECTORY}
+                            )
     target_link_libraries(${PROJECT_NAME} PRIVATE
-            -lclang_rt.asan-x86_64
-    )
+                          -lclang_rt.asan-x86_64
+                          )
 endif ()
 
 target_sources(
@@ -119,14 +125,14 @@ target_sources(
         PRIVATE ${PRIVATE_INC_FILES}
         PRIVATE ${SRC_FILES}
         PUBLIC ${INC_FILES}
-)
+        )
 
 set_target_properties(
         ${PROJECT_NAME}
         PROPERTIES
         VERSION ${LIB_VERSION}
         OUTPUT_NAME ${PROJECT_NAME}
-)
+        )
 if (BUILD_DOCS)
     find_package(Doxygen REQUIRED doxygen)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Docs)
@@ -137,6 +143,6 @@ if (BUILD_DOCS)
             doxygen
             ${PROJECT_SOURCE_DIR}/inc
             ALL
-    )
+            )
 endif ()
 
