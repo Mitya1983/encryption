@@ -51,12 +51,16 @@ include_directories(
 
 file(GLOB INC_FILES CONFIGURE_DEPENDS
         include/*.hpp
+)
+file(GLOB PRIVATE_INC_FILES CONFIGURE_DEPENDS
         cryptopp/*.h
 )
 file(GLOB SRC_FILES CONFIGURE_DEPENDS
         source/*.cpp
         cryptopp/*.cpp
 )
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
 set(LIB_VERSION 2.0.0)
 
@@ -112,6 +116,7 @@ endif ()
 
 target_sources(
         ${PROJECT_NAME}
+        PRIVATE ${PRIVATE_INC_FILES}
         PRIVATE ${SRC_FILES}
         PUBLIC ${INC_FILES}
 )
